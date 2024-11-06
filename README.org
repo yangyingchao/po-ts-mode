@@ -1,0 +1,27 @@
+#+TITLE: markdown-ts-mode
+#+AUTHOR: Yang.Yingchao
+#+EMAIL: yang.yingchao@qq.com
+
+
+A major mode for Emacs providing really BASIC syntax highlight for
+po files using Treesitter.
+
+Please note this provides very basic functionality. If you're looking
+for a fully featured mature mode, please consider [[https://github.com/emacsmirror/po-mode/][po-mode]].
+
+
+** Install
+
+This package is available on MELPA. If you already have it set, add to your ~init.el~ file:
+
+#+BEGIN_SRC elisp
+  (use-package po-ts-mode
+    :mode ("\\.po\\'" . po-ts-mode)
+    :defer 't)
+#+END_SRC
+
+
+** Don't skip this
+Before using it, be sure you have BOTH ~po~ grammars installed.
+
+https://github.com/tree-sitter-grammars/tree-sitter-po
