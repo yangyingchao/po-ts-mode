@@ -65,15 +65,6 @@
     table)
   "Syntax table for `po-ts-mode'.")
 
-
-(defvar po-ts--indent-rules
-  `((po
-     ((node-is "}") parent-bol 0)
-     ((node-is ")") parent-bol 0)
-     ((node-is "]") parent-bol 0)
-     ((parent-is "object") parent-bol po-ts-mode-indent-offset)
-     ((parent-is "array") parent-bol po-ts-mode-indent-offset))))
-
 (defvar po-ts-mode--font-lock-settings
   (treesit-font-lock-rules
    :language 'po
@@ -105,17 +96,6 @@
    '((ERROR) @font-lock-warning-face))
   "Font-lock settings for PO.")
 
-(defun po-ts-mode--defun-name (node)
-  "Return the defun name of NODE.
-Return nil if there is no name or if NODE is not a defun node."
-  (pcase (treesit-node-type node)
-    ((or "pair" "object")
-     (string-trim (treesit-node-text
-                   (treesit-node-child-by-field-name
-                    node "key")
-                   t)
-                  "\"" "\""))))
-
 ;;;###autoload
 (define-derived-mode po-ts-mode fundamental-mode "PO[ts]"
   "Major mode for editing PO, powered by tree-sitter."
@@ -132,19 +112,7 @@ Return nil if there is no name or if NODE is not a defun node."
   (setq-local comment-start-skip "\\(?://+\\|/\\*+\\)\\s *")
   (setq-local comment-end "")
 
-  ;; Electric
-  (setq-local electric-indent-chars
-              (append "{}():;," electric-indent-chars))
-
-  ;; Indent.
-  (setq-local treesit-simple-indent-rules po-ts--indent-rules)
-
-  ;; Navigation.
-  (setq-local treesit-defun-name-function #'po-ts-mode--defun-name)
-
-  (setq-local treesit-thing-settings
-              `((po
-                 (sentence "pair"))))
+  (setq-local treesit-thing-settings `((po (sentence "pair"))))
 
   ;; Font-lock.
   (setq-local treesit-font-lock-settings po-ts-mode--font-lock-settings)
@@ -153,12 +121,7 @@ Return nil if there is no name or if NODE is not a defun node."
     '((comment constant keyword number pair string escape-sequence)
       (bracket delimiter error)))
 
-  ;; Imenu.
-  (setq-local treesit-simple-imenu-settings
-              '((nil "\\`pair\\'" nil nil)))
-
   (treesit-major-mode-setup))
-
 
 (if (treesit-ready-p 'po)
     (add-to-list 'auto-mode-alist
